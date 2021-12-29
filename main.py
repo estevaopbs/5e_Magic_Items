@@ -20,7 +20,7 @@ class Randomizer(QMainWindow, Ui_MainWindow):
         self.source_help.clicked.connect(self.source_help_func)
         self.amount_box.setMinimum(1)
         self.show_all.clicked.connect(self.show_all_func)
-        self.setWindowTitle('Uber Item')
+        self.setWindowTitle('5e Magic Items')
         self.textBrowser.setOpenExternalLinks(True)
 
     def source_help_func(self):
