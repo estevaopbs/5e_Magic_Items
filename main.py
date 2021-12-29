@@ -26,7 +26,7 @@ class Randomizer(QMainWindow, Ui_MainWindow):
     def source_help_func(self):
         self.textBrowser.setText(Magic_items.source_help)
 
-    def show_all_func(self):
+    def _get_inputs(self):
         sources = []
         rarities = []
         types = []
@@ -43,26 +43,15 @@ class Randomizer(QMainWindow, Ui_MainWindow):
         for _attunement in self.all_attunements:
             if _attunement.checkState() == 2:
                 attunements.append(_attunement.text())
+        return sources, rarities, types, attunements
+
+    def show_all_func(self):
+        sources, rarities, types, attunements = self._get_inputs()
         items_str = Magic_items.show_all(Source=sources, Rarity=rarities, Type=types, Attuned=attunements)
         self.textBrowser.setText(items_str)
 
     def randomize_func(self):
-        sources = []
-        rarities = []
-        types = []
-        attunements = []
-        for _source in self.all_sources:
-            if _source.checkState() == 2:
-                sources.append(_source.text())
-        for _rarity in self.all_rarities:
-            if _rarity.checkState() == 2:
-                rarities.append(_rarity.text())
-        for _type in self.all_types:
-            if _type.checkState() == 2:
-                types.append(_type.text())
-        for _attunement in self.all_attunements:
-            if _attunement.checkState() == 2:
-                attunements.append(_attunement.text())
+        sources, rarities, types, attunements = self._get_inputs()
         items_str = Magic_items.random(self.amount_box.value(), Source=sources, Rarity=rarities, Type=types,
             Attuned=attunements)
         self.textBrowser.setText(items_str)
