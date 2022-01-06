@@ -2,7 +2,6 @@ from PyQt5.QtCore import Qt
 from design import *
 from PyQt5.QtWidgets import QMainWindow, QApplication, QScrollBar
 import sys
-import time
 
 
 class Randomizer(QMainWindow, Ui_MainWindow):
@@ -88,15 +87,16 @@ class Magic_item_browser(QtWidgets.QTextBrowser):
     def __init__(self, properties, content_area):
         super().__init__(content_area)
         self.properties = properties
-        self.setFixedHeight(135)
-        self.setMarkdown(str(self))
-        self.setOpenExternalLinks(True)
+        self.setFixedHeight(175)
+        self.setHtml(str(self))
         self.showing_description = False
         self.is_description_loaded = False
         self.description = None
         self.text_scroll = QScrollBar()
         self.setVerticalScrollBar(self.text_scroll)
         self.mouseDoubleClickEvent = lambda x: self.description_switch()
+        self.setOpenLinks(True)
+        self.setOpenExternalLinks(True)
 
     def description_switch(self):
         if self.showing_description == False:
@@ -108,23 +108,23 @@ class Magic_item_browser(QtWidgets.QTextBrowser):
                 self.description = str(html.select('.page-title')[0]) + str(html.find(id='page-content'))\
                     .replace(str(html.find(id='page-content').select('.content-separator')[0]), '')\
                         .replace('\n\n', '\n')
+                self.description = self.description.replace('<span>',
+                f"<h2><a href=http://dnd5e.wikidot.com{self.properties['URL']}>").replace('</span>', '</a></h2>')
                 self.is_description_loaded = True
             self.setHtml(self.description)
             while self.text_scroll.maximum() != 0:
-                self.setFixedHeight(self.height() + 1)
+                self.setFixedHeight(self.height() + 5)
         else:
-            self.setFixedHeight(135)
-            self.setMarkdown(str(self))
+            self.setFixedHeight(175)
+            self.setHtml(str(self))
         self.showing_description = not self.showing_description
 
     def __str__(self) -> str:
-        item_str = f"[**{self.properties[list(self.properties.keys())[0]]}**]" +\
-            "(http://dnd5e.wikidot.com{self.properties['URL']})\n\n"
+        item_str = f"<div><h2><a href=http://dnd5e.wikidot.com{self.properties['URL']}>" +\
+            f"{self.properties[list(self.properties.keys())[0]]}</a></h2></div><p>"
         for attrib in list(self.properties.keys())[1:-1]:
-            item_str += (f'**{attrib}:** {self.properties[attrib]}\n\n')
-        for source in Magic_item.sources.keys():
-            if source in item_str:
-                item_str = item_str.replace(source, Magic_item.sources[source])
+            item_str += (f'<p><strong>{attrib}</strong>: {self.properties[attrib]}</p>')
+        item_str += '</p>'
         return item_str
 
 
